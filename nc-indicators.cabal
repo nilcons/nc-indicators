@@ -40,7 +40,7 @@ Executable nc-indicators
   Default-Language: Haskell2010
   GHC-Options: -Wall -threaded
   Build-Depends:
-      base         >= 4.6
+      base         >= 4.6 && < 5
     , array        >= 0.4
     , attoparsec   >= 0.10
     , bytestring   >= 0.10
