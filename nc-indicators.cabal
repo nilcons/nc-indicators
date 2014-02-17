@@ -2,7 +2,7 @@ Name: nc-indicators
 Version: 0.1
 License: Apache-2.0
 License-File: LICENSE
-Author: Mihaly Barasz <klao@nilcons.com>, Gergely Risko <errge@nilcons.com>
+Author: Mihaly Barasz, Gergely Risko
 Maintainer: Mihaly Barasz <klao@nilcons.com>, Gergely Risko <errge@nilcons.com>
 Cabal-Version: >= 1.10
 Build-Type: Simple
