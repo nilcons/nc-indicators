@@ -41,6 +41,12 @@ import System.IO
 import System.Posix.Signals
 import Text.Printf
 
+
+defineFlag "show_cpu" True "Show the CPU load indicator/icon."
+defineFlag "show_mem" True "Show the memory usage indicator/icon."
+defineFlag "update_interval" (500 :: Int)
+  "Update interval for all indicators in milliseconds."
+
 --------------------------------------------------------------------------------
 -- Acquiring raw CPU and RAM numbers
 
@@ -117,7 +123,7 @@ measureCPU = lift readCPUCounters >>= go
       go m
 
 delay :: Pipe a a IO r
-delay = execU (threadDelay 300000)
+delay = execU (threadDelay $ flags_update_interval * 1000)
 
 prettyPrint :: String -> Consumer Measurement IO r
 prettyPrint label = forever $ do
@@ -204,18 +210,22 @@ main = do
   nonGtkArgs <- Gtk.unsafeInitGUIForThreadedRTS
   [] <- withArgs nonGtkArgs $ $initHFlags "Show CPU and MEM graph with tray icons"
 
-  -- Colors are in ABGR (RGBA little-endian)
-  let blue1 = 0xffff4400
-      blue2 = 0x88ff4400
-  cpuIcon <- createIcon
-  _ <- forkIO $ runEffect $ measureCPU >-> delay >-> collectN 100
+  when flags_show_cpu $ do
+    -- Colors are in ABGR (RGBA little-endian)
+    let blue1 = 0xffff4400
+        blue2 = 0x88ff4400
+    cpuIcon <- createIcon
+    _ <- forkIO $ runEffect $ measureCPU >-> delay >-> collectN 100
                             >-> updateIcon cpuIcon blue1 blue2
+    return ()
 
-  let green1 = 0xff44ff00
-      green2 = 0x8844ff00
-  memIcon <- createIcon
-  _ <- forkIO $ runEffect $ measureMEM >-> delay >-> collectN 100
+  when flags_show_mem $ do
+    let green1 = 0xff44ff00
+        green2 = 0x8844ff00
+    memIcon <- createIcon
+    _ <- forkIO $ runEffect $ measureMEM >-> delay >-> collectN 100
                             >-> updateIcon memIcon green1 green2
+    return ()
 
   -- Properly handle Ctrl-C:
   _ <- installHandler sigINT (Catch $ Gtk.postGUIAsync Gtk.mainQuit) Nothing
