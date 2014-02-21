@@ -19,3 +19,9 @@ exec --no-startup-id nc-indicators --show_mem=0 --update_interval=300
 `nc-indicators` uses the standard system tray icon protocol, so it
 can be used with any system tray-like application, not just
 `i3bar`. But it was originally created to be used with `i3bar`.
+
+## FAQs
+
+* What's up with the name? Why _nc_ indicators?
+
+  The two authors together make up http://nilcons.com.
