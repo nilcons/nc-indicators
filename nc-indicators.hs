@@ -83,12 +83,15 @@ readMEMCounters = parseProcMeminfo <$> readProcFile "/proc/meminfo"
     parseHead :: AP.Parser MEMCounters
     parseHead =
       wrapResult <$ "MemTotal:" .*> skipSpace <*> decimal <* kb <*
-        "MemFree:" .*> skipSpace <*> decimal <* kb <*
+        "MemFree:" .*> skipSpace <*> decimal <* kb <*>
+        maybeMemAvailable <*
         "Buffers:" .*> skipSpace <* (skipWhile isDigit) <* kb <*
         "Cached:" .*> skipSpace <*> decimal <* kb
     kb = skipSpace *> "kB" .*> skipSpace
-    wrapResult total free cached =
-      MEMCounters total cached free
+    maybeMemAvailable =
+      Just <$ "MemAvailable:" .*> skipSpace <*> decimal <* kb <|> pure Nothing
+    wrapResult total free mAvailable cached =
+      MEMCounters total cached $ maybe free id mAvailable
 
 forceParse :: AP.Parser a -> BS.ByteString -> a
 forceParse parser = either error id . AP.parseOnly parser
