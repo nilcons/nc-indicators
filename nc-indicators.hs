@@ -47,6 +47,8 @@ defineFlag "show_mem" True "Show the memory usage indicator/icon."
 defineFlag "update_interval" (500 :: Int)
   "Update interval for all indicators in milliseconds."
 
+$(return [])
+
 --------------------------------------------------------------------------------
 -- Acquiring raw CPU and RAM numbers
 
